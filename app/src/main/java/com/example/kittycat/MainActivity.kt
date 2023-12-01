@@ -10,33 +10,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.kittycat.catapi.RetrofitHelper
 import com.example.kittycat.ui.theme.KittyCatTheme
 
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-//import androidx.appcompat.app.AppCompatActivity
+
 import android.util.Log
+import com.example.kittycat.catapi.CatBible
 import com.example.kittycat.catapi.Cataas
+import com.example.kittycat.catapi.RetrofitHelper
+//import com.example.kittycat.catapi.hold
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import retrofit2.create
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("fortnite", "HI")
-        print("hi")
-//
-        val CataasConn = RetrofitHelper.getInstance().create(Cataas::class.java)
-//        // launching a new coroutine
-        GlobalScope.launch {
-            val result = CataasConn.getQuotes()
-            if (result != null)
-            // Checking the results
-                Log.d("fortnite ", result.body().toString())
-        }
+
+        val cb = CatBible()
+        Log.d("fortnite ", cb.result)
 
         setContent {
             KittyCatTheme {
