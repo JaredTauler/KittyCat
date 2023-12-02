@@ -1,32 +1,44 @@
 package com.example.kittycat
 
+
+//import com.example.kittycat.catapi.hold
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.example.kittycat.catapi.CatBible
 import com.example.kittycat.ui.theme.KittyCatTheme
 
+class MainActivity : ComponentActivity(), CatBibleCallback {
+    private val catBible = CatBible()
 
-import android.util.Log
-import com.example.kittycat.catapi.CatBible
-import com.example.kittycat.catapi.Cataas
-import com.example.kittycat.catapi.RetrofitHelper
-//import com.example.kittycat.catapi.hold
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-
-class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val cb = CatBible()
-        Log.d("fortnite ", cb.result)
+        catBible.setCallback(this)
+
 
         setContent {
             KittyCatTheme {
@@ -35,29 +47,78 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    DiscoverCat(catBible)
                 }
             }
         }
 
+    }
 
+    private fun updateCurrentCat() {
+
+    }
+
+    override fun onBibleLoaded() {
+        Log.d("fortnite ", "HELL")
     }
 }
 
 
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun DiscoverCat(bible: CatBible, modifier: Modifier = Modifier) {
+//    await bible.getnewCat()
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    KittyCatTheme {
-        Greeting("Android")
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+//        Text(text = doubles, fontSize = 24.sp)
+//        Log.d("fortnite", bible.getnewCat().toString())
+//        bible.getnewCat()
+        val img = "https://cataas.com/cat/BgStpOSAyjeFKwRG"
+        var cat by remember { mutableStateOf(
+            bible.newCat()
+        ) }
+        Log.d("fortnite", cat.toString())
+        Row(
+            modifier = Modifier
+                .height(500.dp)
+                .fillMaxWidth()
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current).data(
+                    bible.readCurrentCat()?.imgurl()
+                )
+                    .crossfade(true).build(),
+//            error = painterResource(R.drawable.ic_broken_image),
+//            placeholder = painterResource(R.drawable.loading_img),
+                contentDescription = "",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
+        Button(
+            onClick = {
+                cat = bible.newCat()
+            },
+        ) {
+            Text(text = "", fontSize = 24.sp)
+        }
+        Log.d("fortnite", bible.readCurrentCat()?._id.toString())
     }
 }
+
+//@Composable
+//fun Greeting(name: String, modifier: Modifier = Modifier) {
+//    Text(
+//        text = "Hello $name!",
+//        modifier = modifier
+//    )
+//}
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun GreetingPreview() {
+//    KittyCatTheme {
+//        Greeting("Android")
+//    }
+//}

@@ -1,45 +1,95 @@
 package com.example.kittycat.catapi
 
-import kotlinx.coroutines.*
-
 import android.util.Log
-import com.example.kittycat.catapi.data.*
-import retrofit2.Response
-
-
-
-class CatBible {
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.example.kittycat.CatBibleCallback
+import com.example.kittycat.catapi.data.Cat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.random.Random
+class CatBible : ViewModel() {
 
     private var apiJob: Job? = null
 
     // API connector
     private var CataasConn = RetrofitHelper.getInstance().create(Cataas::class.java)
 
-    private var bible: Map<String, Cat>? = null
+    private var _bibleData = MutableLiveData<List<Cat>>()
+    val bibleData: LiveData<List<Cat>> get() = _bibleData
+
+
+    private var Seen: MutableList<Int> = mutableListOf()
 
     public var result: String = ""
 
+    private var callback: CatBibleCallback? = null
+
+    var currentCat = MutableLiveData<Cat>()
+
     init {
-        getDataFromAPI()
+        CoroutineScope(Dispatchers.IO).launch {
+            updateBible()
+        }
+        Log.d("fortnite", "hi21")
     }
 
-    fun getDataFromAPI() {
-        apiJob?.cancel()
-        apiJob = GlobalScope.launch(Dispatchers.IO)
-        {
-            //TODO catch errors
-//            val c: Response<count> = CataasConn.getCount()
+    private suspend fun updateBible() {
+//        try {
+            val newData = getDataFromAPI()
+            withContext(Dispatchers.Main) {
+                _bibleData.postValue(newData)
+                notifyCallback()
+            }
 
-            // get all cats
-            val response = CataasConn.getCats(10.toString())
+//        } catch (e: Exception) {
+            // Handle the error
+//        }
+    }
 
-            val bible: Map<String, Cat> = response.body()
-                ?.associateBy { it._id }
-                ?: emptyMap()
+    private fun notifyCallback() {
+        Log.d("fortnite ", "HELL")
+        callback?.onBibleLoaded()
+    }
 
-//            Log.d("fortnite ", catMap.toString())
+    fun setCallback(catBibleCallback: CatBibleCallback) {
+        callback = catBibleCallback
+    }
+
+    private suspend fun getDataFromAPI(): List<Cat> {
+
+        val response = CataasConn.getCats(10.toString()).body()
+        return response ?: emptyList() // TODO Handle the case when the response is null
+    }
+
+
+
+    fun newCat() : Cat? {
+        CoroutineScope(Dispatchers.IO).launch {
+            currentCat.postValue(findCat())
         }
+//        withContext(Dispatchers.Main) {
+//            currentCat.postValue(getNewCat())
+//        }
+        return readCurrentCat()
+    }
 
+    fun findCat(): Cat {
+        try {
+            val filtered = _bibleData.value.orEmpty().filterIndexed { index, _ -> index !in Seen }
+            val chosen = Random.nextInt(filtered.size)
+            Seen.add(chosen) // cat has been seen now
+            return  filtered[chosen]
+        } catch (e: java.lang.IllegalArgumentException) {
+            return Cat("1", emptyList(), "none")
+        }
+    }
 
+    fun readCurrentCat(): Cat? {
+        return currentCat.value
     }
 }
