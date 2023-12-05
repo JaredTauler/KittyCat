@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,13 +27,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.kittycat.catapi.data.Cat
 import com.example.kittycat.data.Datasource
+import com.example.kittycat.ui.theme.KittyCatTheme
 
 class SavedCats : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_saved_cats2)
         setContent{
-            catList()
+            KittyCatTheme {
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+
+                }
+            }
         }
     }
 
@@ -47,12 +57,21 @@ class SavedCats : AppCompatActivity() {
     val data: Datasource = Datasource()
     val source = data.getList()
 
+
     @Composable
     fun CatList(catList: MutableList<Cat?>, modifier: Modifier = Modifier) {
         LazyColumn(modifier = modifier) {
-            catList.forEach{ cat ->
+            catList.forEach { cat ->
                 /*return cat*/
             }
+        }
+    }
+
+        @Preview(showBackground = true)
+        @Composable
+        fun SavedCatsPreview() {
+        KittyCatTheme {
+           catList()
         }
 
     /*@Composable
@@ -71,6 +90,5 @@ class SavedCats : AppCompatActivity() {
             .fillMaxSize()
             .wrapContentSize(Alignment.Center)
         )*/
-
     }
 }

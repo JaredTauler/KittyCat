@@ -124,6 +124,15 @@ fun DiscoverCat(bible: CatBible, modifier: Modifier = Modifier) {
             Text(text = "Save Cat", fontSize = 24.sp)
         }
 
+        Button(
+            onClick = {
+
+            }
+        ){
+            Text(text = "See Saved Cats", fontSize = 24.sp)
+        }
+
+
         Log.d("fortnite", bible.readCurrentCat()?._id.toString())
     }
 }
