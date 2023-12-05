@@ -2,4 +2,10 @@
 <resources>
 
     <style name="Theme.KittyCat" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.KittyCat.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="Theme.KittyCat.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.KittyCat.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

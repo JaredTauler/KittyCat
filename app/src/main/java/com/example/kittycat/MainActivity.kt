@@ -2,6 +2,7 @@ package com.example.kittycat
 
 
 //import com.example.kittycat.catapi.hold
+import android.media.Image
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -29,7 +30,10 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.kittycat.catapi.CatBible
+import com.example.kittycat.catapi.data.Cat
 import com.example.kittycat.ui.theme.KittyCatTheme
+import com.example.kittycat.data.Datasource
+import kotlin.reflect.KProperty1
 
 class MainActivity : ComponentActivity(), CatBibleCallback {
     private val catBible = CatBible()
@@ -101,8 +105,25 @@ fun DiscoverCat(bible: CatBible, modifier: Modifier = Modifier) {
                 cat = bible.newCat()
             },
         ) {
-            Text(text = "", fontSize = 24.sp)
+            Text(text = "Click For a Cat", fontSize = 24.sp)
         }
+
+        //gets datasource of arrayList if cats
+        val data: Datasource = Datasource()
+
+        //gets list of cats in datasource
+        val source = data.getList()
+
+
+        Button(
+            //adds picture to cat arrayList in datasource file
+            onClick = {
+                data.addPic(source, cat)
+            }
+        ){
+            Text(text = "Save Cat", fontSize = 24.sp)
+        }
+
         Log.d("fortnite", bible.readCurrentCat()?._id.toString())
     }
 }
