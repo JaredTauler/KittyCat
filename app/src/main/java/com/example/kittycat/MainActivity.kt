@@ -66,8 +66,6 @@ class MainActivity : ComponentActivity(), CatBibleCallback {
                                 navController.navigate("secondScreen")
                             })
                         } else {
-                            // You can show a loading UI or placeholder here
-                            // while waiting for onBibleLoaded callback
                             Text(text = "Loading...")
                         }
                     }
@@ -167,13 +165,16 @@ fun SecondScreen(bible: CatBible, navController: NavHostController) {
 fun CatImage(cat: Cat?, modifier: Modifier = Modifier) {
     // TODO handle null cat
     if (cat != null) {
+
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current).data(
                 cat.imgurl()
             )
-                .crossfade(true).build(),
-//            error = painterResource(R.drawable.ic_broken_image),
-//            placeholder = painterResource(R.drawable.loading_img),
+                .crossfade(true)
+                .placeholder(
+                    R.drawable.maxwell
+                )
+                .build(),
             contentDescription = "",
             contentScale = ContentScale.Fit,
             modifier = Modifier.fillMaxSize()
@@ -181,6 +182,7 @@ fun CatImage(cat: Cat?, modifier: Modifier = Modifier) {
     }
 
 }
+
 
 @Composable
 fun CatItem(cat: Cat) {
