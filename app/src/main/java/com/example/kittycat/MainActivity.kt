@@ -10,6 +10,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -38,7 +39,11 @@ import com.example.kittycat.data.Datasource
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TextField
-import kotlin.reflect.KProperty1
+
+//problem with navigation import statement????
+/*import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.NavHostController*/
 
 class MainActivity : ComponentActivity(), CatBibleCallback {
     private val catBible = CatBible()
@@ -83,12 +88,15 @@ enum class CatScreen()
 fun DiscoverCat(bible: CatBible, modifier: Modifier = Modifier) {
 //    await bible.getnewCat()
 
+    //was trying to make nav controller from cupcake assignment but the
+    // imports arent working and I can't test things out
+
+    /*navController: NavHostController = rememberNavController()
     //Navigation Host
-    /*Scaffold(
+    Scaffold(
 
     ){  innerPadding ->
-        val viewModel
-        val uiState by viewModel.uiState.collectAsState
+        val uiState by viewModel.uiState.collectAsState()
 
         NavHost(
             navController = navController,
@@ -96,7 +104,15 @@ fun DiscoverCat(bible: CatBible, modifier: Modifier = Modifier) {
             modifier = Modifier.padding(innerPadding)
         )
         {
-            
+            composable(route = CatScreen.Saved.name){
+                MainActivity(
+                    cats = DataSource.cats,
+                    onNextButtonClicked = {
+                        viewModel.setQuantity(it)
+                        navController.navigate(CatScreen.Saved.name)
+                    }
+                )
+            }
         }
     }*/
 
@@ -104,6 +120,7 @@ fun DiscoverCat(bible: CatBible, modifier: Modifier = Modifier) {
 //        Text(text = doubles, fontSize = 24.sp)
 //        Log.d("fortnite", bible.getnewCat().toString())
 //        bible.getnewCat()
+        //val navController = rememberNavController()
         val img = "https://cataas.com/cat/BgStpOSAyjeFKwRG"
         var catDescription by remember{
             mutableStateOf("")
