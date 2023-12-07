@@ -11,7 +11,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.random.Random
 class CatBible : ViewModel() {
 
     private var apiJob: Job? = null
@@ -30,16 +29,18 @@ class CatBible : ViewModel() {
     private var callback: CatBibleCallback? = null
 
     var currentCat = MutableLiveData<Cat>()
+    var likedCats: MutableList<Cat> = mutableListOf()
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
             updateBible()
+
         }
-        Log.d("fortnite", "hi21")
     }
 
     private suspend fun updateBible() {
 //        try {
+            Thread.sleep(2_000)
             val newData = getDataFromAPI()
             withContext(Dispatchers.Main) {
                 _bibleData.postValue(newData)
@@ -80,13 +81,43 @@ class CatBible : ViewModel() {
 
     fun findCat(): Cat {
         try {
-            val filtered = _bibleData.value.orEmpty().filterIndexed { index, _ -> index !in Seen }
-            val chosen = Random.nextInt(filtered.size)
-            Seen.add(chosen) // cat has been seen now
+//            val filtered = _bibleData.value.orEmpty().filterIndexed { index, _ -> index !in Seen }
+//
+//            val chosen = Random.nextInt(filtered.size)
+//            Seen.add(chosen) // cat has been seen now
+//            Log.d("fortnite", Seen.toString())
+
+            val filtered = _bibleData.value.orEmpty()
+
+            // Create a set of all indices
+            val allIndices = filtered.indices.toMutableSet()
+
+            // Remove seen indices
+            allIndices.removeAll(Seen)
+
+            // Choose a random index from the remaining set
+            val chosen = allIndices.random()
+
+            // Add the chosen index to the seen set
+            Seen.add(chosen)
+
             return  filtered[chosen]
         } catch (e: java.lang.IllegalArgumentException) {
+            // TODO error cat
             return Cat("1", emptyList(), "none")
         }
+    }
+
+    fun likeCat() {
+//        val currentLikedCats = likedCats.orEmpty().toMutableList()
+
+        val c = currentCat.value
+        if (
+            c != null && !likedCats.contains(c)
+        ) {
+            likedCats.add(c)
+        }
+        Log.d("fortnite", likedCats.toString())
     }
 
     fun readCurrentCat(): Cat? {
