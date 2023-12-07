@@ -19,7 +19,7 @@ interface Cataas {
     @GET("/api/cats")
     suspend fun getCats(
         @Query("limit") limit: String
-    ): Response<List<Cat>>
+    ): Response<MutableList<Cat>>
 
 
     @GET("/api/count")

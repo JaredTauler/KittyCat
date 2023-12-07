@@ -86,30 +86,26 @@ class MainActivity : ComponentActivity(), CatBibleCallback {
 }
 
 
-
-
-
 @Composable
 fun DiscoverCat(bible: CatBible, modifier: Modifier = Modifier, onNavigate: () -> Unit) {
-
+    var cat by remember { mutableStateOf(bible.currentCat) }
 
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
 
-        val img = "https://cataas.com/cat/BgStpOSAyjeFKwRG"
-        var cat by remember { mutableStateOf(bible.newCat()) }
+
         Log.d("fortnite", cat.toString())
         Row(
             modifier = Modifier
                 .height(500.dp)
                 .fillMaxWidth()
         ) {
-            CatImage(cat = bible.readCurrentCat())
+            CatImage(cat = bible.currentCat)
         }
 
         Button(
             onClick = {
-                // Perform actions or update state as needed
-                cat = bible.newCat()
+                bible.newCat()
+                cat = bible.currentCat // I hate livedata so much.
                 Log.d("fortnite", "new cat!")
             },
             modifier = Modifier.padding(8.dp)
@@ -118,7 +114,6 @@ fun DiscoverCat(bible: CatBible, modifier: Modifier = Modifier, onNavigate: () -
         }
         Button(
             onClick = {
-                // Perform actions or update state as needed
                 bible.likeCat()
 
             },
@@ -134,7 +129,7 @@ fun DiscoverCat(bible: CatBible, modifier: Modifier = Modifier, onNavigate: () -
             Text(text = "Go to Second Screen")
         }
 
-        Log.d("fortnite", bible.readCurrentCat()?._id.toString())
+        Log.d("fortnite", bible.currentCat?._id.toString())
     }
 }
 
@@ -157,7 +152,7 @@ fun SecondScreen(bible: CatBible, navController: NavHostController) {
 
 
     }
-    // Button to navigate back to the first screen
+
     Button(
         onClick = {
             navController.popBackStack()
@@ -189,21 +184,19 @@ fun CatImage(cat: Cat?, modifier: Modifier = Modifier) {
 
 @Composable
 fun CatItem(cat: Cat) {
-    // Display a single cat item in the list
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Display the cat image (replace with your actual image loading logic)
-        CatImage(cat = cat, modifier = Modifier
-            .size(50.dp)
-            .clip(shape = RoundedCornerShape(4.dp))
-            .background(MaterialTheme.colorScheme.primary)
+        CatImage(
+            cat = cat, modifier = Modifier
+                .size(50.dp)
+                .clip(shape = RoundedCornerShape(4.dp))
+                .background(MaterialTheme.colorScheme.primary)
         )
 
-        // Display the cat information
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = "meow", fontSize = 16.sp)
     }

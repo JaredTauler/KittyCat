@@ -1,8 +1,6 @@
 package com.example.kittycat.catapi
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.kittycat.CatBibleCallback
 import com.example.kittycat.catapi.data.Cat
@@ -18,8 +16,8 @@ class CatBible : ViewModel() {
     // API connector
     private var CataasConn = RetrofitHelper.getInstance().create(Cataas::class.java)
 
-    private var _bibleData = MutableLiveData<List<Cat>>()
-    val bibleData: LiveData<List<Cat>> get() = _bibleData
+//    private var _bibleData = <List<Cat>>()
+    var bibleData: MutableList<Cat> = mutableListOf()
 
 
     private var Seen: MutableList<Int> = mutableListOf()
@@ -28,7 +26,7 @@ class CatBible : ViewModel() {
 
     private var callback: CatBibleCallback? = null
 
-    var currentCat = MutableLiveData<Cat>()
+    var currentCat: Cat? = null
     var likedCats: MutableList<Cat> = mutableListOf()
 
     init {
@@ -41,9 +39,9 @@ class CatBible : ViewModel() {
     private suspend fun updateBible() {
 //        try {
             Thread.sleep(2_000)
-            val newData = getDataFromAPI()
             withContext(Dispatchers.Main) {
-                _bibleData.postValue(newData)
+                bibleData = getDataFromAPI()
+                newCat()
                 notifyCallback()
             }
 
@@ -61,33 +59,23 @@ class CatBible : ViewModel() {
         callback = catBibleCallback
     }
 
-    private suspend fun getDataFromAPI(): List<Cat> {
+    private suspend fun getDataFromAPI(): MutableList<Cat> {
 
         val response = CataasConn.getCats(10.toString()).body()
-        return response ?: emptyList() // TODO Handle the case when the response is null
+        return response ?: mutableListOf() // TODO Handle the case when the response is null
     }
 
 
 
-    fun newCat() : Cat? {
-        CoroutineScope(Dispatchers.IO).launch {
-            currentCat.postValue(findCat())
-        }
-//        withContext(Dispatchers.Main) {
-//            currentCat.postValue(getNewCat())
+    fun newCat() {
+//        CoroutineScope(Dispatchers.IO).launch {
+        currentCat = findCat()
 //        }
-        return readCurrentCat()
     }
 
     fun findCat(): Cat {
         try {
-//            val filtered = _bibleData.value.orEmpty().filterIndexed { index, _ -> index !in Seen }
-//
-//            val chosen = Random.nextInt(filtered.size)
-//            Seen.add(chosen) // cat has been seen now
-//            Log.d("fortnite", Seen.toString())
-
-            val filtered = _bibleData.value.orEmpty()
+            val filtered = bibleData
 
             // Create a set of all indices
             val allIndices = filtered.indices.toMutableSet()
@@ -102,6 +90,7 @@ class CatBible : ViewModel() {
             Seen.add(chosen)
 
             return  filtered[chosen]
+
         } catch (e: java.lang.IllegalArgumentException) {
             // TODO error cat
             return Cat("1", emptyList(), "none")
@@ -111,7 +100,7 @@ class CatBible : ViewModel() {
     fun likeCat() {
 //        val currentLikedCats = likedCats.orEmpty().toMutableList()
 
-        val c = currentCat.value
+        val c = currentCat
         if (
             c != null && !likedCats.contains(c)
         ) {
@@ -120,7 +109,7 @@ class CatBible : ViewModel() {
         Log.d("fortnite", likedCats.toString())
     }
 
-    fun readCurrentCat(): Cat? {
-        return currentCat.value
-    }
+//    fun readCurrentCat(): Cat? {
+//        return currentCat
+//    }
 }
