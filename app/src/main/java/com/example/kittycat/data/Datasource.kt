@@ -9,6 +9,23 @@ import com.example.kittycat.data.Datasource
 
 class Datasource() {
 
+    var cats = mutableListOf<String>()
+    fun getList(): MutableList<String>
+    {
+        return cats
+    }
+    fun addDescription(list: MutableList<String>, cat: String){
+        list.add(cat)
+    }
+    fun loadCatPics(): List<String>{
+        return listOf<String>(
+            //descriptions added as button clicked hopefully?
+        )
+    }
+
+    //instead of returning saved cats, it will return user entered descriptions of the cats they saw
+
+    /* scrapped
     //creates list to add cats to
     var cats = mutableListOf<Cat?>()
 
@@ -18,7 +35,7 @@ class Datasource() {
         return cats
     }
 
-    //add pic to cat list
+    //add pic to cat list, scrapped
     fun addPic(list: MutableList<Cat?>, cat: Cat?){
         list.add(cat)
     }
@@ -29,4 +46,5 @@ class Datasource() {
             //pictures added as button clicked hopefully?
         )
     }
+    */
 }

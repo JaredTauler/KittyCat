@@ -2,6 +2,7 @@ package com.example.kittycat
 
 
 //import com.example.kittycat.catapi.hold
+import android.content.Intent
 import android.media.Image
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +35,9 @@ import com.example.kittycat.catapi.CatBible
 import com.example.kittycat.catapi.data.Cat
 import com.example.kittycat.ui.theme.KittyCatTheme
 import com.example.kittycat.data.Datasource
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TextField
 import kotlin.reflect.KProperty1
 
 class MainActivity : ComponentActivity(), CatBibleCallback {
@@ -67,17 +72,42 @@ class MainActivity : ComponentActivity(), CatBibleCallback {
     }
 }
 
+enum class CatScreen()
+{
+    Start,
+    Saved
+}
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiscoverCat(bible: CatBible, modifier: Modifier = Modifier) {
 //    await bible.getnewCat()
+
+    //Navigation Host
+    /*Scaffold(
+
+    ){  innerPadding ->
+        val viewModel
+        val uiState by viewModel.uiState.collectAsState
+
+        NavHost(
+            navController = navController,
+            startDestination = CatScreen.Start.name,
+            modifier = Modifier.padding(innerPadding)
+        )
+        {
+            
+        }
+    }*/
 
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
 //        Text(text = doubles, fontSize = 24.sp)
 //        Log.d("fortnite", bible.getnewCat().toString())
 //        bible.getnewCat()
         val img = "https://cataas.com/cat/BgStpOSAyjeFKwRG"
+        var catDescription by remember{
+            mutableStateOf("")
+        }
         var cat by remember { mutableStateOf(
             bible.newCat()
         ) }
@@ -104,33 +134,54 @@ fun DiscoverCat(bible: CatBible, modifier: Modifier = Modifier) {
             onClick = {
                 cat = bible.newCat()
             },
+            modifier = modifier.padding(15.dp)
         ) {
-            Text(text = "Click For a Cat", fontSize = 24.sp)
+            Text(text = "Click For a Cat", fontSize = 20.sp)
+
         }
 
-        //gets datasource of arrayList if cats
-        val data: Datasource = Datasource()
+        //code got from: https://developer.android.com/jetpack/compose/text/user-input
+        TextField(
+            value = catDescription,
+            onValueChange = {catDescription = it},
+            label = {Text("Cat Description")},
+            modifier = modifier.padding(15.dp)
+        )
 
+
+        //changing instead of saving cats, we'll save user descriptions of cats
+        /*
+        //gets datasource of arrayList of cats
+        val data: Datasource = Datasource()
         //gets list of cats in datasource
         val source = data.getList()
+        */
 
+        //gets datasource of arrayList of catDescriptions
+        val data: Datasource = Datasource()
+        //gets list of catsDescriptions in datasource
+        val source = data.getList()
 
         Button(
             //adds picture to cat arrayList in datasource file
             onClick = {
-                data.addPic(source, cat)
-            }
+                data.addDescription(source, catDescription)
+            },
+            modifier = modifier.padding(15.dp)
         ){
-            Text(text = "Save Cat", fontSize = 24.sp)
+            Text(text = "Save Cat Description", fontSize = 20.sp)
         }
 
         Button(
             onClick = {
-
-            }
+                //Intent intent = new Intent(MainActivity.this, SavedCats.class)
+            },
+            modifier = modifier.padding(bottom = 15.dp)
         ){
-            Text(text = "See Saved Cats", fontSize = 24.sp)
+            Text(text = "See Saved Cat Descriptions", fontSize = 20.sp)
         }
+
+
 
 
         Log.d("fortnite", bible.readCurrentCat()?._id.toString())
